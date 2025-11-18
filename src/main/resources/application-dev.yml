@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/user?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+logging:
+  level:
+    org.example.testdemo: debug
+jwt:
+  secret: "myStrongSecretKey1234567890abcdefg"
+  expiration: 86400000

@@ -8,10 +8,10 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     List<User> getAllUsers();
-    User getUserById(int id);
     int insertUser(User user);
     int updateUser(User user);
     int deleteUser(int id);
 
+    User getUserByAccount(String account);
     User login(String account, String password);
 }

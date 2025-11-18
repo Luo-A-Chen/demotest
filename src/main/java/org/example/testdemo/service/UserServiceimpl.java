@@ -1,9 +1,9 @@
 package org.example.testdemo.service;
 
-import org.example.testdemo.config.JwtConfig;
 import org.example.testdemo.dto.LoginRequest;
 import org.example.testdemo.dto.RegisterRequest;
 import org.example.testdemo.dto.UserResponse;
+import org.example.testdemo.dto.SafeUser;
 import org.example.testdemo.entity.User;
 import org.example.testdemo.exception.BusinessException;
 import org.example.testdemo.exception.ErrorCode;
@@ -27,8 +27,10 @@ public class UserServiceimpl implements UserService {
     }
 
     @Override
-    public User getUserById(int id) {
-        return userMapper.getUserById(id);
+    public User getUser() {
+        String token= jwtUtil.getTokenFromRequest();
+        String account= jwtUtil.extractUserAccount(token);
+        return userMapper.getUserByAccount(account);
     }
 
     @Override
@@ -37,8 +39,16 @@ public class UserServiceimpl implements UserService {
     }
 
     @Override
-    public int updateUser(User user) {
-        return userMapper.updateUser(user);
+    public BaseResponse<SafeUser> updateUser(User user) {
+        userMapper.updateUser(user);
+        User currentUser=userMapper.getUserByAccount(user.getAccount());
+        SafeUser safeUser=new SafeUser();
+        safeUser.setName(currentUser.getName());
+        safeUser.setAvatar(currentUser.getAvatar());
+        safeUser.setAccount(currentUser.getAccount());
+        safeUser.setEmail(currentUser.getEmail());
+        safeUser.setProfile(currentUser.getProfile());
+        return BaseResponse.success(safeUser);
     }
 
     @Override
@@ -87,6 +97,14 @@ public class UserServiceimpl implements UserService {
         }
         if(!password.equals(checkPassword)){
             throw new BusinessException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+        User existUser=userMapper.getUserByAccount(account);
+        String accountPattern = "^[0-9]+$";
+        if (!account.matches(accountPattern)) {
+            throw new BusinessException(ErrorCode.ACCOUNT_INVALID);
+        }
+        if(existUser!=null){
+            throw new BusinessException(ErrorCode.ACCOUNT_EXISTED);
         }
         User user=new User();
         user.setAccount(account);

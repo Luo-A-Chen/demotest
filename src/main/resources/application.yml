@@ -1,20 +1,16 @@
 spring:
   application:
     name: testdemo
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/user?useSSL=false&serverTimezone=UTC
-    username: root
-    password: 123456
-logging:
-  level:
-    root: warn
-    org.example.testdemo: debug
+  profiles:
+    active: dev
+
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: org.example.testdemo.entity
   configuration:
     map-underscore-to-camel-case: false
-jwt:
-  secret: "myStrongSecretKey1234567890abcdefg"
-  expiration: 86400000
+
+logging:
+  level:
+    root: warn
+

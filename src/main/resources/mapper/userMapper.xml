@@ -8,16 +8,28 @@
         select * from user where id = #{id}
     </select>
     <insert id="insertUser" parameterType="org.example.testdemo.entity.User">
-        insert into user(name,avatar,account,password,email,profile)
-        values(#{name},#{avatar},#{account},#{password},#{email},#{profile})
+        insert into user(name,avatar,account,password,email,profile,create_time)
+        values(#{name},#{avatar},#{account},#{password},#{email},#{profile},now())
     </insert>
     <update id="updateUser" parameterType="org.example.testdemo.entity.User">
-        update user set name=#{name},avatar=#{avatar},account=#{account},password=#{password},email=#{email},profile=#{profile},updateTime=#{updateTime} where id=#{id}
+        update user
+        <set>
+            <if test="name!=null">name=#{name},</if>
+            <if test="avatar!=null">avatar=#{avatar},</if>
+            <if test="account!=null">account=#{account},</if>
+            <if test="password!=null">password=#{password},</if>
+            <if test="email!=null">email=#{email},</if>
+            <if test="profile!=null">profile=#{profile},</if>
+        </set>
+        where id=#{id}
     </update>
     <delete id="deleteUser" parameterType="int">
         delete from user where id = #{id}
     </delete>
     <select id="login" parameterType="org.example.testdemo.entity.User" resultType="org.example.testdemo.entity.User">
         select * from user where account=#{account} and password=#{password}
+    </select>
+    <select id="getUserByAccount" resultType="org.example.testdemo.entity.User">
+        select * from user where account=#{account}
     </select>
 </mapper>

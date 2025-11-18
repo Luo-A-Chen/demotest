@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/school?useSSL=false&serverTimezone=UTC
+    username: school
+    password: bBwRw6ZSDZrLcbPL
+
+logging:
+  level:
+    org.example.testdemo: info
+
+jwt:
+  secret: "ad23f8j23hr8923hr9823hr23hr8923hr9823hr23hr8923hr98"
+  expiration: 86400000

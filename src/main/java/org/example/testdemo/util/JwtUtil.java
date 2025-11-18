@@ -4,8 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.testdemo.config.JwtConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -14,12 +17,16 @@ import java.util.Date;
 public class JwtUtil {
     private final SecretKey secretKey;
     private final long expiration;
+
+    @Autowired
+    private HttpServletRequest request;
+
     public JwtUtil(JwtConfig jwtConfig) {
         this.secretKey = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
         this.expiration = jwtConfig.getExpiration();
     }
 
-    //生成
+    //生成token
     public String generateToken(String account) {
         return Jwts.builder()
                 .setSubject(account)
@@ -28,7 +35,15 @@ public class JwtUtil {
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
-    //解析
+    //获取token
+    public String getTokenFromRequest() {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
+    }
+    //解析claims
     public Claims extractClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -37,17 +52,18 @@ public class JwtUtil {
                 .getBody();
     }
     //提取账号
-    public String extractUsername(String token) {
+    public String extractUserAccount(String token) {
         return extractClaims(token).getSubject();
     }
 
-    //验证token
+    //验证token是否过期
     public boolean isTokenExpired(String token) {
         return extractClaims(token).getExpiration().before(new Date());
     }
 
-    //是否过期
-    public boolean validateToken(String token, String username) {
-        return (username.equals(extractUsername(token)) && !isTokenExpired(token));
+    //是否过期且账号匹配
+    public boolean validateToken(String token, String account) {
+        return (account.equals(extractUserAccount(token)) && !isTokenExpired(token));
     }
+
 }
