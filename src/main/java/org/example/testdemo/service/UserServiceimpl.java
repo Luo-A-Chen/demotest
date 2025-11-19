@@ -40,14 +40,46 @@ public class UserServiceimpl implements UserService {
 
     @Override
     public BaseResponse<SafeUser> updateUser(User user) {
-        userMapper.updateUser(user);
-        User currentUser=userMapper.getUserByAccount(user.getAccount());
-        SafeUser safeUser=new SafeUser();
-        safeUser.setName(currentUser.getName());
-        safeUser.setAvatar(currentUser.getAvatar());
-        safeUser.setAccount(currentUser.getAccount());
-        safeUser.setEmail(currentUser.getEmail());
-        safeUser.setProfile(currentUser.getProfile());
+        // 从JWT token中获取当前登录用户的账户信息
+        String token = jwtUtil.getTokenFromRequest();
+        String currentAccount = jwtUtil.extractUserAccount(token);
+        
+        // 根据账户查询当前用户
+        User currentUser = userMapper.getUserByAccount(currentAccount);
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND);
+        }
+        
+        // 创建一个新的用户对象，只更新前端传递的字段
+        User updateUser = new User();
+        updateUser.setId(currentUser.getId());
+        updateUser.setAccount(currentAccount); // 确保账户不被修改
+        
+        // 只更新前端传递的字段，保持其他字段不变
+        if (user.getName() != null) {
+            updateUser.setName(user.getName());
+        }
+        if (user.getAvatar() != null) {
+            updateUser.setAvatar(user.getAvatar());
+        }
+        if (user.getEmail() != null) {
+            updateUser.setEmail(user.getEmail());
+        }
+        if (user.getProfile() != null) {
+            updateUser.setProfile(user.getProfile());
+        }
+        
+        userMapper.updateUser(updateUser);
+        
+        // 查询更新后的用户信息
+        User updatedUser = userMapper.getUserByAccount(currentAccount);
+        SafeUser safeUser = new SafeUser();
+        safeUser.setName(updatedUser.getName());
+        safeUser.setAvatar(updatedUser.getAvatar());
+        safeUser.setAccount(updatedUser.getAccount());
+        safeUser.setEmail(updatedUser.getEmail());
+        safeUser.setProfile(updatedUser.getProfile());
+
         return BaseResponse.success(safeUser);
     }
 
