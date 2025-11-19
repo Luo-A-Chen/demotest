@@ -36,6 +36,8 @@ public class SecurityConfig{
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/static/**", "/templates/**").permitAll()
+                        // 静态资源访问权限
+                        .requestMatchers("/uploads/avatars/**").permitAll()
                         // 需要认证的接口
                         .anyRequest().authenticated()
                 )

@@ -4,11 +4,13 @@ import org.example.testdemo.dto.LoginRequest;
 import org.example.testdemo.dto.RegisterRequest;
 import org.example.testdemo.dto.UserResponse;
 import org.example.testdemo.dto.SafeUser;
+import org.example.testdemo.dto.AvatarUploadRequest;
 import org.example.testdemo.entity.User;
 import org.example.testdemo.response.BaseResponse;
 import org.example.testdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -44,5 +46,9 @@ public class UserController {
     @PostMapping("/register")
     public Integer register(@RequestBody RegisterRequest request) {
         return userService.register(request);
+    }
+    @PostMapping("/uploadAvatar")
+    public BaseResponse<String> uploadAvatar(@RequestParam("avatar") MultipartFile avatarFile) {
+        return userService.uploadAvatar(avatarFile);
     }
 }

@@ -10,17 +10,27 @@ import org.example.testdemo.exception.ErrorCode;
 import org.example.testdemo.mapper.UserMapper;
 import org.example.testdemo.response.BaseResponse;
 import org.example.testdemo.util.JwtUtil;
+import org.example.testdemo.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
 public class UserServiceimpl implements UserService {
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
+    private final FileUploadUtil fileUploadUtil;
+
+    /**
+     * 构造器注入 - 推荐的方式
+     */
+    public UserServiceimpl(UserMapper userMapper, JwtUtil jwtUtil, FileUploadUtil fileUploadUtil) {
+        this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
+        this.fileUploadUtil = fileUploadUtil;
+    }
     @Override
     public List<User> getAllUsers() {
         return userMapper.getAllUsers();
@@ -144,5 +154,29 @@ public class UserServiceimpl implements UserService {
         int result=userMapper.insertUser(user);
 
         return 0;
+    }
+
+    @Override
+    public BaseResponse<String> uploadAvatar(MultipartFile avatarFile) {
+        // 从JWT token中获取当前登录用户的账户信息
+        String token = jwtUtil.getTokenFromRequest();
+        String currentAccount = jwtUtil.extractUserAccount(token);
+        
+        // 根据账户查询当前用户
+        User currentUser = userMapper.getUserByAccount(currentAccount);
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND);
+        }
+        
+        // 上传头像文件
+        String avatarUrl = fileUploadUtil.uploadAvatar(avatarFile);
+        
+        // 更新用户头像URL
+        User updateUser = new User();
+        updateUser.setId(currentUser.getId());
+        updateUser.setAvatar(avatarUrl);
+        userMapper.updateUser(updateUser);
+        
+        return BaseResponse.success(avatarUrl);
     }
 }

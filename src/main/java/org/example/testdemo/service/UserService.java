@@ -6,6 +6,7 @@ import org.example.testdemo.dto.UserResponse;
 import org.example.testdemo.dto.SafeUser;
 import org.example.testdemo.entity.User;
 import org.example.testdemo.response.BaseResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface UserService {
 
     BaseResponse<UserResponse> login(LoginRequest request);
     int register(RegisterRequest request);
+    
+    BaseResponse<String> uploadAvatar(MultipartFile avatarFile);
 }

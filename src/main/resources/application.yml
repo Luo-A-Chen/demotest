@@ -3,6 +3,17 @@ spring:
     name: testdemo
   profiles:
     active: dev
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+      enabled: true
+# 文件上传配置
+file:
+  upload:
+    server-url: http://localhost:8080
+    avatar-upload-dir: uploads/avatars/
+    avatar-access-path: /uploads/avatars/
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
