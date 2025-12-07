@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.testdemo.mapper.VideoMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.testdemo.entity.Video">
+            <id property="id" column="id" />
+            <result property="title" column="title" />
+            <result property="description" column="description" />
+            <result property="userId" column="user_id" />
+            <result property="cover" column="cover" />
+            <result property="videoUrl" column="video_url" />
+            <result property="duration" column="duration" />
+            <result property="status" column="status" />
+            <result property="type" column="type" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,description,user_id,cover,video_url,duration,
+        status,type,create_time,update_time
+    </sql>
+    <select id="getRecommendList" resultType="org.example.testdemo.dto.response.VideoResponse">
+        select <include refid="Base_Column_List" /> from video where status = 1 and type = 1 order by create_time desc limit 10
+    </select>
+</mapper>

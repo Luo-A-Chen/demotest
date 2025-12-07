@@ -1,11 +1,11 @@
-package org.example.testdemo.service;
+package org.example.testdemo.service.Service;
 
-import org.example.testdemo.dto.LoginRequest;
-import org.example.testdemo.dto.RegisterRequest;
-import org.example.testdemo.dto.UserResponse;
+import org.example.testdemo.dto.Request.LoginRequest;
+import org.example.testdemo.dto.Request.RegisterRequest;
+import org.example.testdemo.dto.response.UserResponse;
 import org.example.testdemo.dto.SafeUser;
 import org.example.testdemo.entity.User;
-import org.example.testdemo.response.BaseResponse;
+import org.example.testdemo.dto.response.BaseResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

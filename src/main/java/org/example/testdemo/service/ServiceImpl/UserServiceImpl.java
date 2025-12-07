@@ -1,24 +1,24 @@
-package org.example.testdemo.service;
+package org.example.testdemo.service.ServiceImpl;
 
-import org.example.testdemo.dto.LoginRequest;
-import org.example.testdemo.dto.RegisterRequest;
-import org.example.testdemo.dto.UserResponse;
+import org.example.testdemo.dto.Request.LoginRequest;
+import org.example.testdemo.dto.Request.RegisterRequest;
+import org.example.testdemo.dto.response.UserResponse;
 import org.example.testdemo.dto.SafeUser;
 import org.example.testdemo.entity.User;
 import org.example.testdemo.exception.BusinessException;
 import org.example.testdemo.exception.ErrorCode;
 import org.example.testdemo.mapper.UserMapper;
-import org.example.testdemo.response.BaseResponse;
+import org.example.testdemo.dto.response.BaseResponse;
+import org.example.testdemo.service.Service.UserService;
 import org.example.testdemo.util.JwtUtil;
 import org.example.testdemo.util.FileUploadUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
-public class UserServiceimpl implements UserService {
+public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
     private final FileUploadUtil fileUploadUtil;
@@ -26,7 +26,7 @@ public class UserServiceimpl implements UserService {
     /**
      * 构造器注入 - 推荐的方式
      */
-    public UserServiceimpl(UserMapper userMapper, JwtUtil jwtUtil, FileUploadUtil fileUploadUtil) {
+    public UserServiceImpl(UserMapper userMapper, JwtUtil jwtUtil, FileUploadUtil fileUploadUtil) {
         this.userMapper = userMapper;
         this.jwtUtil = jwtUtil;
         this.fileUploadUtil = fileUploadUtil;

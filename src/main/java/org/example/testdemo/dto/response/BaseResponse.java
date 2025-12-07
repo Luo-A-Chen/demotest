@@ -1,4 +1,4 @@
-package org.example.testdemo.response;
+package org.example.testdemo.dto.response;
 
 public class BaseResponse<T> {
     private int code;

@@ -1,6 +1,6 @@
 package org.example.testdemo.exception;
 
-import org.example.testdemo.response.BaseResponse;
+import org.example.testdemo.dto.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
