@@ -23,6 +23,10 @@
         status,type,create_time,update_time
     </sql>
     <select id="getRecommendList" resultType="org.example.testdemo.dto.response.VideoResponse">
-        select <include refid="Base_Column_List" /> from video where status = 1 and type = 1 order by create_time desc limit 10
+        select <include refid="Base_Column_List" />
+            from video
+            where status = 1
+            order by create_time
+            desc limit 10
     </select>
 </mapper>

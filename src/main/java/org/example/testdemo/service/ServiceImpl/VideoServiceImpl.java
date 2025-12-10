@@ -45,8 +45,6 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public List<VideoResponse> getRecommendList() {
-        // 这里真实情况应该用 mapper 查询数据库
-        // todo
         return videoMapper.getRecommendList();
     }
 
