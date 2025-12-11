@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.example.testdemo.config.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.crypto.SecretKey;
 import java.util.Date;

@@ -7,16 +7,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * 安全配置类
+ * 配置Spring Security的安全策略，包括CORS、CSRF、HTTP Basic认证、会话管理和请求授权。
+ * 目前使用JWT认证。
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
@@ -30,18 +30,19 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors ->{})
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)// 禁用CSRF防护
+                .httpBasic(AbstractHttpConfigurer::disable)// 禁用HTTP Basic认证
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                )// 配置会话管理为无状态，不使用HTTP会话
                 .authorizeHttpRequests(authz -> authz
-                        // 公开接口
+                        // 登录、注册接口开放
+                        // todo
+                        // 这里的user接口里面还包含了除登录注册以外的其他方法，后续可以优化
                         .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/static/**", "/templates/**").permitAll()
-                        // 静态资源访问权限
-                        .requestMatchers("/uploads/avatars/**").permitAll()
                         // 需要认证的接口
                         .anyRequest().authenticated()
                 )
@@ -51,25 +52,7 @@ public class SecurityConfig{
         return http.build();
     }
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public UserDetailsService userDetailsService() {
+        return new InMemoryUserDetailsManager(); // 空用户管理器
     }
 }
