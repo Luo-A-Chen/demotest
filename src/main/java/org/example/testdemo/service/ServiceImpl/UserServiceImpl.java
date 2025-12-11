@@ -9,9 +9,9 @@ import org.example.testdemo.exception.BusinessException;
 import org.example.testdemo.exception.ErrorCode;
 import org.example.testdemo.mapper.UserMapper;
 import org.example.testdemo.dto.response.BaseResponse;
+import org.example.testdemo.service.Service.FileStorageStrategy;
 import org.example.testdemo.service.Service.UserService;
 import org.example.testdemo.util.JwtUtil;
-import org.example.testdemo.util.FileUploadUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,15 +21,15 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
-    private final FileUploadUtil fileUploadUtil;
+    private final FileStorageStrategy fileStorageService;
 
     /**
      * 构造器注入 - 推荐的方式
      */
-    public UserServiceImpl(UserMapper userMapper, JwtUtil jwtUtil, FileUploadUtil fileUploadUtil) {
+    public UserServiceImpl(UserMapper userMapper, JwtUtil jwtUtil, FileStorageStrategy fileStorageService) {
         this.userMapper = userMapper;
         this.jwtUtil = jwtUtil;
-        this.fileUploadUtil = fileUploadUtil;
+        this.fileStorageService = fileStorageService;
     }
     @Override
     public List<User> getAllUsers() {
@@ -169,7 +169,12 @@ public class UserServiceImpl implements UserService {
         }
         
         // 上传头像文件
-        String avatarUrl = fileUploadUtil.uploadAvatar(avatarFile);
+        String avatarUrl = fileStorageService.saveMultipartFile(avatarFile);
+        
+        // 如果用户已有头像，删除旧头像文件
+        if (currentUser.getAvatar() != null && !currentUser.getAvatar().isEmpty()) {
+            fileStorageService.delete(currentUser.getAvatar());
+        }
         
         // 更新用户头像URL
         User updateUser = new User();

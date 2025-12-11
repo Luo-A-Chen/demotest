@@ -4,7 +4,7 @@ import org.example.testdemo.dto.Request.VideoRequest;
 import org.example.testdemo.entity.Video;
 import org.example.testdemo.dto.response.BaseResponse;
 import org.example.testdemo.service.ServiceImpl.AsyncVideoServiceImpl;
-import org.example.testdemo.service.Service.FileStorageService;
+import org.example.testdemo.service.Service.FileStorageStrategy;
 import org.example.testdemo.service.Service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +25,7 @@ public class VideoController {
 
     @Autowired
     @Qualifier("minioStorageServiceImpl")
-    private FileStorageService fileStorageService;
+    private FileStorageStrategy fileStorageService;
 
     @PostMapping("/upload")
     public BaseResponse<Video> upload(@RequestPart("info") VideoRequest req,

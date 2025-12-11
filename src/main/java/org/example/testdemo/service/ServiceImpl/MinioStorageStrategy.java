@@ -2,16 +2,18 @@ package org.example.testdemo.service.ServiceImpl;
 
 import io.minio.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.example.testdemo.service.Service.FileStorageService;
+import org.example.testdemo.service.Service.FileStorageStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.UUID;
 
 @Service("minioStorageServiceImpl")
-public class MinioStorageServiceImpl implements FileStorageService {
+public class MinioStorageStrategy implements FileStorageStrategy {
 
     @Value("${minio.bucketName}")
     private String bucketName;
@@ -22,7 +24,7 @@ public class MinioStorageServiceImpl implements FileStorageService {
     private final MinioClient minioClient;
 
     @Autowired
-    public MinioStorageServiceImpl(MinioClient minioClient) {
+    public MinioStorageStrategy(MinioClient minioClient) {
         this.minioClient = minioClient;
     }
 
@@ -71,6 +73,63 @@ public class MinioStorageServiceImpl implements FileStorageService {
             return true;
         }catch (Exception e){
             throw new RuntimeException("MinIO 文件删除失败" + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String saveMultipartFile(MultipartFile multipartFile) {
+        try {
+            // 验证文件
+            validateMultipartFile(multipartFile);
+            
+            // 创建存储桶（如果不存在）
+            createBucketIfNotExists();
+            
+            // 生成唯一文件名
+            String originalFilename = multipartFile.getOriginalFilename();
+            String ext = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            String fileName = UUID.randomUUID() + ext;
+            
+            // 上传文件到MinIO
+            try (InputStream inputStream = multipartFile.getInputStream()) {
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(fileName)
+                                .stream(inputStream, multipartFile.getSize(), -1)
+                                .contentType(multipartFile.getContentType())
+                                .build()
+                );
+            }
+            
+            // 返回文件访问路径
+            return endpoint + "/" + bucketName + "/" + fileName;
+            
+        } catch (Exception e) {
+            throw new RuntimeException("MinIO MultipartFile上传失败: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * 验证MultipartFile
+     */
+    private void validateMultipartFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("文件不能为空");
+        }
+        
+        // 文件大小限制（10MB）
+        if (file.getSize() > 10 * 1024 * 1024) {
+            throw new IllegalArgumentException("文件大小不能超过10MB");
+        }
+        
+        // 文件类型验证（只支持图片）
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("只支持图片文件上传");
         }
     }
     /*

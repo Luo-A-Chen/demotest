@@ -3,7 +3,7 @@ package org.example.testdemo.service.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.example.testdemo.entity.Video;
 import org.example.testdemo.service.Service.AsyncVideoService;
-import org.example.testdemo.service.Service.FileStorageService;
+import org.example.testdemo.service.Service.FileStorageStrategy;
 import org.example.testdemo.service.Service.VideoService;
 import org.example.testdemo.util.VideoProcessorUtil;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class AsyncVideoServiceImpl implements AsyncVideoService {
     private VideoProcessorUtil videoProcessorUtil;
 
     @Resource(name ="minioStorageServiceImpl")
-    private FileStorageService minioService;
+    private FileStorageStrategy minioService;
 
     @Override
     public void processVideo(Video video, byte[] videoBytes, String originalFileName) {
