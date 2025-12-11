@@ -2,7 +2,7 @@ package org.example.testdemo.controller;
 
 import org.example.testdemo.dto.response.BaseResponse;
 import org.example.testdemo.dto.response.VideoResponse;
-import org.example.testdemo.service.Service.VideoService;
+import org.example.testdemo.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

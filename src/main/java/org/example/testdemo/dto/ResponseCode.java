@@ -1,4 +1,4 @@
-package org.example.testdemo.dto.response;
+package org.example.testdemo.dto;
 
 public enum ResponseCode {
     SUCCESS(200,"操作成功"),

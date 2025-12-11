@@ -1,5 +1,7 @@
 package org.example.testdemo.dto.response;
 
+import org.example.testdemo.dto.ResponseCode;
+
 public class BaseResponse<T> {
     private int code;
     private String message;

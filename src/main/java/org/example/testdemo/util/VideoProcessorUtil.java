@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 @Component
 public class VideoProcessorUtil {
 
-    private static final String TEMP_DIR="temp";//临时目录
+    private static final String TEMP_DIR = "temp"; // 临时目录
 
     /*
      * 保存MultipartFile到临时目录
@@ -33,7 +33,6 @@ public class VideoProcessorUtil {
      * @return 压缩后的视频文件路径
      */
     public String compress(Path inputFilePath) {
-        // 这里实现视频压缩逻辑
         try {
             if(!Files.exists(inputFilePath)||Files.isDirectory(inputFilePath)){
                 throw new IllegalArgumentException("输入路径不存在或不是文件");
@@ -72,7 +71,6 @@ public class VideoProcessorUtil {
      * @return 封面图文件路径
      */
     public Path generateCover(Path inputFilePath) {
-        // 这里实现封面图生成逻辑
         try {
             String coverName=inputFilePath.getFileName().toString().replace(".mp4","_cover.jpg");
             Path output=inputFilePath.getParent().resolve(coverName);
@@ -107,7 +105,6 @@ public class VideoProcessorUtil {
      * @return 视频时长（秒）
      */
     public int getDuration(Path inputFilePath) {
-        // 这里实现视频时长获取逻辑
         try {
             ProcessBuilder pb=new ProcessBuilder(
                     "ffmpeg",

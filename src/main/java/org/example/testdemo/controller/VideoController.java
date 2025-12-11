@@ -3,9 +3,7 @@ package org.example.testdemo.controller;
 import org.example.testdemo.dto.Request.VideoRequest;
 import org.example.testdemo.entity.Video;
 import org.example.testdemo.dto.response.BaseResponse;
-import org.example.testdemo.service.ServiceImpl.AsyncVideoServiceImpl;
-import org.example.testdemo.service.Service.FileStorageStrategy;
-import org.example.testdemo.service.Service.VideoService;
+import org.example.testdemo.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +17,6 @@ public class VideoController {
 
     @Autowired
     private VideoService videoService;
-
-    @Autowired
-    private AsyncVideoServiceImpl asyncVideoService;
-
-    @Autowired
-    @Qualifier("minioStorageServiceImpl")
-    private FileStorageStrategy fileStorageService;
 
     @PostMapping("/upload")
     public BaseResponse<Video> upload(@RequestPart("info") VideoRequest req,
@@ -43,7 +34,7 @@ public class VideoController {
         videoService.save(video);
 
         //3.提交任务处理到线程池
-        asyncVideoService.processVideo(video, bytes, originalFileName);
+//        asyncVideoService.processVideo(video, bytes, originalFileName);
 
         return BaseResponse.success(video);
     }

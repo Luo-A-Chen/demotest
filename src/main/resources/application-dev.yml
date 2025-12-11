@@ -17,12 +17,6 @@ jwt:
   expiration: 86400000
 minio:
   endpoint: http://localhost:9000
-  accessKey: minioadmin
-  secretKey: minioadmin
+  access-key: minioadmin
+  secret-key: minioadmin
   bucketName: my-bucket
-# 文件上传配置
-file:
-  upload:
-    server-url: http://localhost:8080
-    avatar-upload-dir: uploads/avatars/
-    avatar-access-path: /uploads/avatars/
